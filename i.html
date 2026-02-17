@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TilTalk — Translation Battle Game</title>
+    <meta name="description" content="Play translation battle games in Kazakh language">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;900&family=Noto+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=17">
+    <style>
+        body.game-mode {
+            background: #faf8f3;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .game-screen {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(155, 107, 158, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f0f0f0;
+            min-height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .player-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8b92a9;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #9b6b9e;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #9b6b9e;
+            padding: 12px 24px;
+            border: 2px solid #9b6b9e;
+            border-radius: 50px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .question-box {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border-left: 4px solid #9b6b9e;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .question-hint {
+            font-size: 0.9rem;
+            color: #8b92a9;
+            font-style: italic;
+        }
+
+        .input-answer {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-family: var(--main-font);
+            transition: all 0.2s ease;
+        }
+
+        .input-answer:focus {
+            outline: none;
+            border-color: #9b6b9e;
+            box-shadow: 0 0 0 3px rgba(155, 107, 158, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #9b6b9e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--main-font);
+        }
+
+        .submit-btn:hover {
+            background: #8b5a8f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 107, 158, 0.3);
+        }
+
+        .game-result {
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #9b6b9e;
+            margin-bottom: 16px;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #9b6b9e;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--main-font);
+        }
+
+        .option-button:hover {
+            border-color: #9b6b9e;
+            background: rgba(155, 107, 158, 0.05);
+        }
+
+        .option-button.selected {
+            background: #9b6b9e;
+            color: white;
+            border-color: #9b6b9e;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #9b6b9e;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .back-link a:hover {
+            color: #8b5a8f;
+            text-decoration: underline;
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            background: white;
+            color: #9b6b9e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(155, 107, 158, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .icon-btn.active {
+            background: #9b6b9e;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: var(--main-font);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 150px;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #9b6b9e;
+            box-shadow: 0 0 0 3px rgba(155, 107, 158, 0.1);
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .lang-btn.active {
+            background: #9b6b9e !important;
+            color: white !important;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        #toast-correct {
+            background: #4caf50;
+            border: 2px solid #43a047;
+        }
+
+        #toast-wrong {
+            background: #e53935;
+            border: 2px solid #d32f2f;
+        }
+
+        /* Mic Button Animation */
+        #mic-btn.listening {
+            animation: pulse-red 1.5s infinite;
+            color: #e53935;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(229, 57, 53, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(229, 57, 53, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="game-mode">
+    <!-- Global Error Handler -->
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            const div = document.createElement('div');
+            div.style.cssText = 'position:fixed; top:10px; left:10px; background:red; color:white; padding:10px; z-index:9999; border-radius:5px; max-width:90%; word-wrap:break-word;';
+            div.textContent = 'Error: ' + msg + ' at ' + line + ':' + col;
+            document.body.appendChild(div);
+            console.error('Global Error:', error);
+            return false;
+        };
+    </script>
+
+    <script src="flow-field-bg.js"></script>
+
+    <!-- PeerJS for multiplayer -->
+    <script src="peerjs.min.js"></script>
+    <script>
+        if (!window.Peer) {
+            console.warn("Local PeerJS not found, trying CDN...");
+            document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>');
+        }
+    </script>
+
+    <div class="game-container">
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="lang-switcher-game"
+                style="display:flex; gap:4px; margin-right:8px; background:white; padding:4px; border-radius:8px; box-shadow: 0 2px 8px rgba(155, 107, 158, 0.2);">
+                <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')"
+                    style="border:none; background:transparent; cursor:pointer; font-weight:700; color:#8b92a9; padding:4px 8px; border-radius:4px; transition:all 0.2s;">EN</button>
+                <button class="lang-btn" data-lang="kk" onclick="switchLanguage('kk')"
+                    style="border:none; background:transparent; cursor:pointer; font-weight:700; color:#8b92a9; padding:4px 8px; border-radius:4px; transition:all 0.2s;">ҚАЗ</button>
+                <button class="lang-btn" data-lang="ru" onclick="switchLanguage('ru')"
+                    style="border:none; background:transparent; cursor:pointer; font-weight:700; color:#8b92a9; padding:4px 8px; border-radius:4px; transition:all 0.2s;">РУС</button>
+            </div>
+            <button class="icon-btn" id="btn-a11y" onclick="Game.toggleA11y()" title="Accessibility Mode">👁️</button>
+            <button class="icon-btn" onclick="Game.startCamera()" title="Camera Mode">📷</button>
+            <button class="icon-btn" onclick="Game.startVoice()" title="Voice Mode">🎤</button>
+        </div>
+
+        <!-- LOBBY SCREEN -->
+        <div id="screen-lobby" class="game-screen">
+            <h1
+                style="text-align: center; font-size: 2.5rem; color: #9b6b9e; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <img src="logo.svg" alt="TilTalk Logo" style="height: 50px; width:auto;">
+                TilTalk
+            </h1>
+            <p style="text-align: center; color: #8b92a9; margin-bottom: 30px; font-size: 1.1rem;"
+                data-i18n="game.subtitle">Quick translation battles!</p>
+
+            <div style="margin-bottom: 20px;">
+                <label class="form-label" data-i18n="game.name_label">Your Name</label>
+                <input type="text" class="form-input" id="inp-name" placeholder="Your Name" maxlength="15"
+                    data-i18n-placeholder="game.name_placeholder">
+            </div>
+
+
+            <button class="btn btn-primary" onclick="Game.createRoom()" style="width: 100%; margin-bottom: 12px;"
+                data-i18n="game.create">🎮 Create Game Room</button>
+            <button class="btn btn-secondary" onclick="UI.showJoin()" style="width: 100%; margin-bottom: 12px;"
+                data-i18n="game.join">🔗 Join Room</button>
+            <button class="btn btn-secondary" onclick="Game.startSinglePlayer()"
+                style="width: 100%; margin-bottom: 12px;" data-i18n="game.single">⚔️ Solo Game</button>
+
+            <div style="width: 100%; height: 1px; background: rgba(0,0,0,0.1); margin: 16px 0;"></div>
+
+            <button class="btn btn-secondary" onclick="EssayBattle.start()"
+                style="width: 100%; margin-bottom: 12px; background: #9b6b9e; color: white;"
+                data-i18n="game.essay_practice">📝 Practice Essay (AI)</button>
+            <button class="btn btn-secondary" onclick="Game.startEssay()" style="width: 100%;" data-i18n="game.essay">✍️
+                Essay Mode</button>
+
+            <div class="back-link">
+                <a href="index.html" data-i18n="game.back_dashboard">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <!-- HOST WAITING SCREEN -->
+        <div id="screen-host" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="game.waiting">⏳ Waiting for Player</h2>
+
+            <p style="text-align: center; color: #8b92a9; margin-bottom: 20px;" data-i18n="game.share_code">Share this
+                code with your friend:</p>
+            <div
+                style="background: #f9f9f9; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 2.5rem; font-weight: 900; color: #9b6b9e; font-family: monospace; letter-spacing: 4px;"
+                    id="host-code">ABCDE</div>
+            </div>
+
+            <p style="text-align: center; color: #8b92a9; font-size: 0.9rem;" id="status-host"
+                data-i18n="game.status_waiting">Waiting...</p>
+            <button class="btn btn-secondary" onclick="UI.showLobby()" style="width: 100%; margin-top: 20px;"
+                data-i18n="game.cancel">← Cancel</button>
+        </div>
+
+        <!-- JOIN SCREEN -->
+        <div id="screen-join" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="game.join_title">🔗 Join a Game</h2>
+
+            <div style="margin-bottom: 20px;">
+                <label class="form-label" data-i18n="game.room_code_label">Room Code</label>
+                <input type="text" class="form-input" id="inp-code" placeholder="ABCDE" maxlength="5"
+                    style="text-transform: uppercase;" data-i18n-placeholder="game.room_code_placeholder">
+            </div>
+
+            <button class="btn btn-primary" onclick="Game.joinRoom()" style="width: 100%; margin-bottom: 12px;"
+                data-i18n="game.join_btn">Join Game</button>
+            <button class="btn btn-secondary" onclick="UI.showLobby()" style="width: 100%;" data-i18n="game.back">←
+                Back</button>
+            <p style="text-align: center; color: #8b92a9; font-size: 0.9rem; margin-top: 16px;" id="status-join"></p>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="screen-game" class="game-screen" style="display: none;">
+            <div class="game-header">
+                <div class="player-score">
+                    <div class="score-label" data-i18n="game.you">You</div>
+                    <div class="score-value" id="score-me">0</div>
+                </div>
+                <div class="timer" id="timer">90</div>
+                <div class="player-score">
+                    <div class="score-label" id="label-opp" data-i18n="game.opponent">Opponent</div>
+                    <div class="score-value" id="score-opp">0</div>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <p id="q-ctx"
+                    style="text-align:center; color:#8b92a9; font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:8px;">
+                    Kazakh → English</p>
+                <div class="question-text" id="q-text">Сәлем</div>
+                <div class="question-hint" id="q-hint">Translate to English</div>
+            </div>
+
+            <div id="answers-container" class="answers-container">
+                <div class="input-row">
+                    <button id="mic-btn" class="mic-btn" onclick="Game.initVoice()" title="Voice Input">🎤</button>
+                    <input type="text" class="input-answer" id="inp-ans" placeholder="Type your answer..."
+                        autocomplete="off" data-i18n-placeholder="game.input_placeholder">
+                </div>
+
+                <button class="submit-btn" onclick="Game.checkAnswer()" data-i18n="game.submit_answer">Submit
+                    Answer</button>
+            </div>
+
+            <div id="status-msg" style="text-align: center; margin-top: 12px; font-weight: 600; min-height: 20px;">
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="screen-results" class="game-screen" style="display: none;">
+            <div class="game-result">
+                <div class="result-title" id="result-title" data-i18n="game.over">Game Over!</div>
+                <div class="result-score" id="result-score">100</div>
+                <p style="color: #8b92a9; margin-bottom: 20px;">
+                    <span data-i18n="game.you">You</span>: <strong id="final-me">0</strong> | <span
+                        data-i18n="game.opponent">Opponent</span>: <strong id="final-opp">0</strong>
+                </p>
+                <button class="btn btn-primary" onclick="location.reload()" style="width: 100%; margin-bottom: 12px;"
+                    data-i18n="game.play_again">Play Again</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="width: 100%;"
+                    data-i18n="game.back_dashboard">Back to Dashboard</button>
+            </div>
+        </div>
+
+        <!-- CAMERA SCREEN -->
+        <div id="screen-camera" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 24px;" data-i18n="game.camera">📷 Camera Mode</h2>
+            <p style="text-align: center; color: #8b92a9; margin-bottom: 20px; font-size: 0.9rem;"
+                data-i18n="game.camera_desc">Show your answer using objects detected by camera</p>
+
+            <video id="camera-video" style="display: none;"></video>
+            <canvas id="camera-canvas" width="640" height="480"
+                style="width: 100%; border-radius: 12px; margin-bottom: 16px;"></canvas>
+
+            <div id="camera-container" style="text-align: center;">
+                <button class="btn btn-primary" onclick="CameraLearn.start()" style="width: 100%; margin-bottom: 12px;"
+                    id="camera-btn" data-i18n="game.camera_start">🎥 Start AI Recognition</button>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <p style="text-align: center; color: #8b92a9; font-size: 0.9rem;" id="camera-status"
+                    data-i18n="game.camera_ready">Camera ready</p>
+                <div id="camera-objects"
+                    style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px;"></div>
+            </div>
+
+            <input type="text" class="input-answer" id="camera-answer" placeholder="Type or speak your answer..."
+                autocomplete="off" style="margin-bottom: 12px;" data-i18n-placeholder="game.camera_answer">
+            <button class="submit-btn" onclick="Game.submitCameraAnswer()" data-i18n="game.submit">Submit</button>
+            <button class="btn btn-secondary" onclick="CameraLearn.stop()" style="width: 100%; margin-top: 12px;"
+                data-i18n="game.back">← Stop & Back</button>
+        </div>
+
+        <!-- VOICE SCREEN -->
+        <div id="screen-voice" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="game.voice">🎤 Voice Mode</h2>
+
+            <div class="question-box">
+                <div class="question-text" id="voice-q-text">Сәлем</div>
+                <div class="question-hint" id="voice-q-hint" data-i18n="game.voice_desc">Speak your answer</div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn btn-primary" id="voice-btn" onclick="Game.toggleVoice()"
+                    style="width: 100%; padding: 16px; font-size: 1.1rem; margin-bottom: 12px;"
+                    data-i18n="game.voice_start">🎙️ Start Recording</button>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <p style="text-align: center; color: #8b92a9; font-size: 0.9rem;" id="voice-status"
+                    data-i18n="game.voice_ready">Ready to listen</p>
+            </div>
+
+            <input type="text" class="input-answer" id="voice-answer" placeholder="Recognized text will appear here..."
+                readonly data-i18n-placeholder="game.voice_answer">
+            <button class="submit-btn" onclick="Game.submitVoiceAnswer()" style="margin-bottom: 12px;"
+                data-i18n="game.submit">Submit</button>
+            <button class="btn btn-secondary" onclick="UI.showLobby()" style="width: 100%;" data-i18n="game.back">←
+                Back</button>
+        </div>
+
+        <!-- ESSAY WRITING SCREEN -->
+        <div id="screen-essay-write" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 24px;" data-i18n="game.essay_title">✍️ Essay Writing</h2>
+
+            <div
+                style="background:rgba(155,107,158,0.1); padding:16px; border-radius:8px; margin-bottom:20px; border-left:4px solid #9b6b9e;">
+                <div
+                    style="font-size:0.8rem; text-transform:uppercase; color:#9b6b9e; font-weight:700; margin-bottom:4px;">
+                    Topic</div>
+                <div id="essay-topic-text" style="font-size:1.1rem; font-weight:600; color:#333;">...</div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-size:0.9rem; color:#8b92a9;" data-i18n="game.essay_desc">Write a short essay</div>
+                <div style="font-weight:700; color:#e53935; font-family:monospace; font-size:1.1rem;">
+                    ⏳ <span id="essay-timer">300</span>s
+                </div>
+            </div>
+
+            <textarea id="essay-input" placeholder="Write your essay here..."
+                data-i18n-placeholder="game.essay_placeholder" style="min-height:200px;"></textarea>
+
+            <div style="margin-top: 8px; text-align: right; color: #8b92a9; font-size: 0.85rem;">
+                <span data-i18n="game.essay_word_count">Word count:</span> <span id="essay-word-count">0 words</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="EssayBattle.submit()"
+                style="width: 100%; margin-top: 16px; margin-bottom: 12px;" data-i18n="game.essay_submit">Submit
+                Essay</button>
+            <button class="btn btn-secondary" onclick="UI.showLobby()" style="width: 100%;" data-i18n="game.back">←
+                Back</button>
+        </div>
+
+        <!-- LOADING SCREEN (New) -->
+        <div id="screen-loading" class="game-screen" style="display: none; text-align: center; padding-top: 100px;">
+            <div class="spinner"
+                style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: #9b6b9e; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;">
+            </div>
+            <h2 style="color: #9b6b9e; margin-bottom: 10px;" data-i18n="game.evaluating">Evaluating...</h2>
+            <p style="color: #8b92a9;">The AI is reading your essay.</p>
+        </div>
+
+        <!-- ESSAY RESULTS SCREEN -->
+        <div id="screen-essay-results" class="game-screen" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px;" data-i18n="game.essay_results">🏆 Essay Feedback</h2>
+
+            <div id="essay-results-content">
+                <!-- content injected by JS -->
+            </div>
+
+            <button class="btn btn-primary" onclick="EssayBattle.start()" style="width: 100%; margin-bottom: 12px;"
+                data-i18n="game.essay_try_again">Try Again</button>
+            <button class="btn btn-secondary" onclick="UI.showLobby()" style="width: 100%;"
+                data-i18n="game.back_dashboard">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-correct" class="toast">
+        <span>✅</span> <span>Correct!</span>
+    </div>
+    <div id="toast-wrong" class="toast">
+        <span>❌</span> <span>Wrong!</span>
+    </div>
+
+    <script src="translations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
