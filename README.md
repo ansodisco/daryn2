@@ -1,75 +1,32 @@
-# React + TypeScript + Vite
+# 🤖 AI Chatbot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the complete source code for building an AI Chatbot using HTML, CSS, and JavaScript. The project features a clean and responsive design, allowing for easy interaction with the chatbot.
 
-Currently, two official plugins are available:
+## 📦 Get Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To get the complete source code, download the zip file that contains all the necessary code and assets.
 
-## React Compiler
+## ⭐ Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Chat Functionality**: Interact with the AI-powered chatbot.
+- **Google Gemini API**: Utilizes a free API to generate responses.
+- **Loading Animation**: Engaging animation displayed before responses.
+- **Image Upload**: Upload images and ask related questions to the chatbot.
+- **Emoji Picker**: Easy-to-use emoji picker for enhanced conversations.
+- **Responsive Design**: Adapts to various screen sizes and devices.
+- **Easy Customization**: Simple to integrate and customize according to your needs.
+- **Clean Code**: Well-structured and commented code for easy understanding.
 
-Note: This will impact Vite dev & build performances.
+## 🖼️ Icon
 
-## Expanding the ESLint configuration
+An SVG icon representing the chatbot is included in the repository as `chatbot-icon.svg`. You can use this icon in your project for branding or visual representation.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📄 License
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🤝 Contributing
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Feel free to submit issues or pull requests if you want to contribute to the project!
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
