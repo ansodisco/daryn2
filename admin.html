@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kazakh Learning — Admin Panel</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --purple: #7c3aed;
+      --purple-light: #ede9fe;
+      --purple-dark: #5b21b6;
+      --green: #059669;
+      --green-light: #d1fae5;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --gray: #6b7280;
+      --gray-light: #f3f4f6;
+      --white: #ffffff;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f8fafc;
+      color: #1f2937;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--purple-dark);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    .sidebar-logo span {
+      opacity: .7;
+      font-size: .75rem;
+      display: block;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .nav-group {
+      padding: 16px 0 4px 20px;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      opacity: .5;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background .15s;
+      font-size: .9rem;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .15);
+      border-left-color: #fff;
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      font-size: 1.1rem;
+    }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      padding: 32px;
+      max-width: 900px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--gray);
+      font-size: .9rem;
+      margin-bottom: 28px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Forms ── */
+    .form-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: .9rem;
+      color: #1f2937;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .15);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    .form-hint {
+      font-size: .75rem;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn:hover {
+      opacity: .88;
+    }
+
+    .btn:active {
+      transform: scale(.97);
+    }
+
+    .btn-primary {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--purple);
+      border: 1.5px solid var(--purple);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: .8rem;
+    }
+
+    /* ── Alerts ── */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: .88rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: var(--green-light);
+      color: #065f46;
+    }
+
+    .alert-error {
+      background: var(--red-light);
+      color: #991b1b;
+    }
+
+    .alert-info {
+      background: var(--blue-light);
+      color: #1e40af;
+    }
+
+    .alert {
+      display: none;
+    }
+
+    .alert.show {
+      display: flex;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+
+    thead tr {
+      background: var(--gray-light);
+    }
+
+    th,
+    td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: #374151;
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    tr:hover td {
+      background: #fafafa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .badge-green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge-blue {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .badge-purple {
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    /* ── Login page ── */
+    .login-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--gray-light);
+    }
+
+    .login-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .12);
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-card h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: var(--gray);
+      font-size: .88rem;
+      margin-bottom: 28px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+
+      .form-grid-2,
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 56px;
+      }
+
+      .sidebar-logo,
+      .nav-group,
+      .nav-item span {
+        display: none;
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: 14px;
+      }
+
+      .main {
+        padding: 20px 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+  <div id="loginPage" class="login-wrap">
+    <div class="login-card">
+      <h1>🎓 KazLearn</h1>
+      <p>Admin Panel — sign in to continue</p>
+      <div id="loginAlert" class="alert alert-error">❌ <span id="loginMsg"></span></div>
+      <div class="form-grid" style="gap:14px">
+        <div>
+          <label>Username</label>
+          <input id="loginUser" type="text" placeholder="Student123" autocomplete="username">
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Sign In</button>
+        <p style="text-align:center;font-size:.8rem;color:var(--gray)">
+          No account? <a href="#" onclick="showRegisterPage()" style="color:var(--purple);font-weight:600">Register
+            here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ REGISTER ═══════════════════════════ -->
+  <div id="registerPage" class="login-wrap" style="display:none">
+    <div class="login-card">
+      <h1>🎓 KazLearn</h1>
+      <p>Create a new account</p>
+      <div id="registerAlert" class="alert alert-error">❌ <span id="registerMsg"></span></div>
+      <div id="registerSuccess" class="alert alert-success" style="display:none">✅ Account created! Redirecting…</div>
+      <div class="form-grid" style="gap:14px">
+        <div><label>Username</label><input id="regUser" type="text" placeholder="YourName"></div>
+        <div><label>Email</label><input id="regEmail" type="email" placeholder="you@email.com"></div>
+        <div><label>Password <span style="font-weight:400;color:var(--gray)">(min 6 chars)</span></label>
+          <input id="regPass" type="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-success" style="width:100%;justify-content:center" onclick="doRegister()">Create
+          Account</button>
+        <p style="text-align:center;font-size:.8rem;color:var(--gray)">
+          Already have one? <a href="#" onclick="showLoginPage()" style="color:var(--purple);font-weight:600">Sign
+            in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ MAIN APP ═══════════════════════════ -->
+  <div id="app" class="layout" style="display:none">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">🎓 TilTalk <span>Admin Panel</span></div>
+      <div class="nav-group">Content</div>
+      <div class="nav-item active" onclick="showPage('dashboard')"><span
+          class="nav-icon">🏠</span><span>Dashboard</span></div>
+      <div class="nav-item" onclick="showPage('addUser')"><span class="nav-icon">👤</span><span>Register User</span>
+      </div>
+      <div class="nav-item" onclick="showPage('addCourse')"><span class="nav-icon">📚</span><span>Add Course</span>
+      </div>
+      <div class="nav-item" onclick="showPage('addLesson')"><span class="nav-icon">📝</span><span>Add Lesson</span>
+      </div>
+      <div class="nav-item" onclick="showPage('addWord')"><span class="nav-icon">🔤</span><span>Add Word</span></div>
+      <div class="nav-item" onclick="showPage('addTestQuestion')"><span class="nav-icon">❓</span><span>Add Test
+          Question</span></div>
+      <div class="nav-group">Browse</div>
+      <div class="nav-item" onclick="showPage('viewCourses')"><span class="nav-icon">📋</span><span>View Courses</span>
+      </div>
+      <div class="nav-item" onclick="showPage('viewWords')"><span class="nav-icon">📖</span><span>View Words</span>
+      </div>
+      <div class="nav-item" onclick="showPage('viewTests')"><span class="nav-icon">📝</span><span>View Tests</span>
+      </div>
+      <div class="nav-group">Account</div>
+      <div class="nav-item" onclick="doLogout()"><span class="nav-icon">🚪</span><span>Logout</span></div>
+    </nav>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <h1>Dashboard</h1>
+        <p class="subtitle">Welcome back, <strong id="welcomeUser"></strong>!</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:24px">
+          <div class="card" style="margin:0;padding:20px">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--purple)" id="statCourses">—</div>
+            <div style="font-size:.85rem;color:var(--gray);margin-top:4px">Total Courses</div>
+          </div>
+          <div class="card" style="margin:0;padding:20px">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--green)" id="statWords">—</div>
+            <div style="font-size:.85rem;color:var(--gray);margin-top:4px">Words Learned</div>
+          </div>
+          <div class="card" style="margin:0;padding:20px">
+            <div style="font-size:1.8rem;font-weight:700;color:var(--blue)" id="statCompleted">—</div>
+            <div style="font-size:.85rem;color:var(--gray);margin-top:4px">Courses Done</div>
+          </div>
+          <div class="card" style="margin:0;padding:20px">
+            <div style="font-size:1.8rem;font-weight:700;color:#f59e0b" id="statStreak">—</div>
+            <div style="font-size:.85rem;color:var(--gray);margin-top:4px">Day Streak</div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Quick Actions</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <button class="btn btn-primary" onclick="showPage('addCourse')">➕ Add Course</button>
+            <button class="btn btn-success" onclick="showPage('addWord')">➕ Add Word</button>
+            <button class="btn btn-outline" onclick="showPage('addTestQuestion')">❓ Add Test Question</button>
+            <button class="btn btn-outline" onclick="showPage('addUser')">👤 Register User</button>
+            <button class="btn btn-outline" onclick="showPage('viewCourses')">📋 View Courses</button>
+            <button class="btn btn-outline" onclick="showPage('viewTests')">📝 View Tests</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTER NEW USER -->
+      <div id="page-addUser" class="page">
+        <h1>Register New User</h1>
+        <p class="subtitle">Create a new learner account</p>
+        <div id="userAlert" class="alert"></div>
+        <div class="card">
+          <h2>👤 User Details</h2>
+          <div class="form-grid form-grid-2">
+            <div><label>Username *</label><input id="uUser" type="text" placeholder="NewLearner"></div>
+            <div><label>Email *</label><input id="uEmail" type="email" placeholder="learner@email.com"></div>
+            <div>
+              <label>Password * <span style="font-weight:400;color:var(--gray)">(min 6 chars)</span></label>
+              <input id="uPass" type="password" placeholder="••••••••">
+            </div>
+            <div style="grid-column:1/-1;margin-top:4px">
+              <button class="btn btn-primary" onclick="submitUser()">✅ Create Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD COURSE -->
+      <div id="page-addCourse" class="page">
+        <h1>Add New Course</h1>
+        <p class="subtitle">Fill in all three languages</p>
+        <div id="courseAlert" class="alert"></div>
+        <div class="card">
+          <h2>📚 Course Information</h2>
+          <div class="form-grid">
+            <div class="form-grid form-grid-3">
+              <div><label>Title (English) *</label><input id="cTitleEn" type="text" placeholder="Basic Greetings"></div>
+              <div><label>Title (Kazakh) *</label><input id="cTitleKk" type="text" placeholder="Негізгі сәлемдесулер">
+              </div>
+              <div><label>Title (Russian) *</label><input id="cTitleRu" type="text" placeholder="Основные приветствия">
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Description (EN)</label><textarea id="cDescEn"
+                  placeholder="What students will learn…"></textarea></div>
+              <div><label>Description (KK)</label><textarea id="cDescKk"
+                  placeholder="Студенттер не үйренеді…"></textarea></div>
+              <div><label>Description (RU)</label><textarea id="cDescRu" placeholder="Что изучат студенты…"></textarea>
+              </div>
+            </div>
+            <div style="max-width:240px">
+              <label>Level *</label>
+              <select id="cLevel">
+                <option value="">— choose level —</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+            <div><button class="btn btn-primary" onclick="submitCourse()">✅ Create Course</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD LESSON -->
+      <div id="page-addLesson" class="page">
+        <h1>Add Lesson to Course</h1>
+        <p class="subtitle">Select a course and add a lesson</p>
+        <div id="lessonAlert" class="alert"></div>
+        <div class="card">
+          <h2>📝 Lesson Details</h2>
+          <div class="form-grid">
+            <div style="max-width:340px">
+              <label>Course *</label>
+              <select id="lCourse">
+                <option value="">— loading courses… —</option>
+              </select>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Title (English) *</label><input id="lTitleEn" type="text"
+                  placeholder="Introduction to Vowels"></div>
+              <div><label>Title (Kazakh) *</label><input id="lTitleKk" type="text"
+                  placeholder="Дауысты дыбыстарға кіріспе"></div>
+              <div><label>Title (Russian) *</label><input id="lTitleRu" type="text" placeholder="Введение в гласные">
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Content (EN)</label><textarea id="lContentEn"
+                  placeholder="Lesson content in English…"></textarea></div>
+              <div><label>Content (KK)</label><textarea id="lContentKk"
+                  placeholder="Сабақ мазмұны қазақ тілінде…"></textarea></div>
+              <div><label>Content (RU)</label><textarea id="lContentRu"
+                  placeholder="Содержание урока на русском…"></textarea></div>
+            </div>
+            <div><button class="btn btn-primary" onclick="submitLesson()">✅ Add Lesson</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD WORD -->
+      <div id="page-addWord" class="page">
+        <h1>Add Word</h1>
+        <p class="subtitle">Add a new vocabulary word to a lesson</p>
+        <div id="wordAlert" class="alert"></div>
+        <div class="card">
+          <h2>🔤 Word Details</h2>
+          <div class="form-grid">
+            <div class="form-grid form-grid-2">
+              <div style="max-width:340px">
+                <label>Course *</label>
+                <select id="wCourse" onchange="loadLessonsForWord()">
+                  <option value="">— choose course —</option>
+                </select>
+              </div>
+              <div>
+                <label>Lesson *</label>
+                <select id="wLesson">
+                  <option value="">— choose course first —</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Kazakh *</label><input id="wKazakh" type="text" placeholder="Сәлем"></div>
+              <div><label>English *</label><input id="wEnglish" type="text" placeholder="Hello"></div>
+              <div><label>Russian *</label><input id="wRussian" type="text" placeholder="Привет"></div>
+            </div>
+            <div class="form-grid form-grid-2">
+              <div>
+                <label>Pronunciation</label>
+                <input id="wPronun" type="text" placeholder="salem">
+                <div class="form-hint">Phonetic spelling in Latin letters</div>
+              </div>
+              <div>
+                <label>Word Type</label>
+                <select id="wType">
+                  <option value="">— optional —</option>
+                  <option value="greeting">Greeting</option>
+                  <option value="expression">Expression</option>
+                  <option value="answer">Answer</option>
+                  <option value="noun">Noun</option>
+                  <option value="verb">Verb</option>
+                  <option value="adjective">Adjective</option>
+                  <option value="adverb">Adverb</option>
+                  <option value="number">Number</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Example sentence (KK)</label><textarea id="wExKk"
+                  placeholder="Сәлем! Қалың қалай?"></textarea></div>
+              <div><label>Example sentence (EN)</label><textarea id="wExEn"
+                  placeholder="Hello! How are you?"></textarea></div>
+              <div><label>Example sentence (RU)</label><textarea id="wExRu" placeholder="Привет! Как дела?"></textarea>
+              </div>
+            </div>
+            <div><button class="btn btn-primary" onclick="submitWord()">✅ Add Word</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW COURSES -->
+      <div id="page-viewCourses" class="page">
+        <h1>All Courses</h1>
+        <p class="subtitle">Overview of courses in the database</p>
+        <div class="card">
+          <h2>📋 Course List</h2>
+          <div class="table-wrap">
+            <table id="coursesTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title (EN)</th>
+                  <th>Level</th>
+                  <th>Lessons</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="5" style="text-align:center;color:var(--gray);padding:20px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW WORDS -->
+      <div id="page-viewWords" class="page">
+        <h1>Browse Words</h1>
+        <p class="subtitle">All vocabulary words grouped by lesson</p>
+        <div class="card">
+          <h2>🔤 Filter by Course & Lesson</h2>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <div style="min-width:200px">
+              <label>Course</label>
+              <select id="filterCourse" onchange="loadLessonsForFilter()">
+                <option value="">All courses</option>
+              </select>
+            </div>
+            <div style="min-width:200px">
+              <label>Lesson</label>
+              <select id="filterLesson" onchange="loadWordsTable()">
+                <option value="">All lessons</option>
+              </select>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadWordsTable()">🔄 Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table id="wordsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Kazakh</th>
+                  <th>English</th>
+                  <th>Russian</th>
+                  <th>Type</th>
+                  <th>Pronunciation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--gray);padding:20px">Select a lesson to load words
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD TEST QUESTION -->
+      <div id="page-addTestQuestion" class="page">
+        <h1>Add Test Question</h1>
+        <p class="subtitle">Create a new test question for a course</p>
+        <div id="testQuestionAlert" class="alert"></div>
+        <div class="card">
+          <h2>❓ Question Details</h2>
+          <div class="form-grid">
+            <div class="form-grid form-grid-2">
+              <div style="max-width:340px">
+                <label>Course *</label>
+                <select id="tqCourse">
+                  <option value="">— choose course —</option>
+                </select>
+              </div>
+              <div>
+                <label>Question Type *</label>
+                <select id="tqType">
+                  <option value="multiple_choice">Multiple Choice</option>
+                  <option value="translation">Translation</option>
+                  <option value="fill_blank">Fill in the Blank</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid form-grid-3">
+              <div><label>Question (English) *</label><textarea id="tqTextEn"
+                  placeholder="What is the Kazakh word for Hello?"></textarea></div>
+              <div><label>Question (Kazakh) *</label><textarea id="tqTextKk"
+                  placeholder="Hello сөзінің қазақша аудармасы?"></textarea></div>
+              <div><label>Question (Russian) *</label><textarea id="tqTextRu"
+                  placeholder="Как переводится Hello на казахский?"></textarea></div>
+            </div>
+            <div class="form-grid form-grid-2">
+              <div>
+                <label>Correct Answer *</label>
+                <input id="tqCorrect" type="text" placeholder="Сәлем">
+              </div>
+              <div>
+                <label>Points</label>
+                <input id="tqPoints" type="number" value="1" min="1" max="10">
+              </div>
+            </div>
+            <div class="form-grid form-grid-2">
+              <div><label>Option 1</label><input id="tqOpt1" type="text" placeholder="Option A"></div>
+              <div><label>Option 2</label><input id="tqOpt2" type="text" placeholder="Option B"></div>
+              <div><label>Option 3</label><input id="tqOpt3" type="text" placeholder="Option C"></div>
+              <div><label>Option 4</label><input id="tqOpt4" type="text" placeholder="Option D"></div>
+            </div>
+            <div class="form-hint">For multiple-choice questions, fill in all 4 options. For translation/fill-blank,
+              options are not required.</div>
+            <div><button class="btn btn-primary" onclick="submitTestQuestion()">✅ Add Question</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW TESTS -->
+      <div id="page-viewTests" class="page">
+        <h1>Test Questions</h1>
+        <p class="subtitle">Browse all test questions by course</p>
+        <div class="card">
+          <h2>📝 Filter by Course</h2>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <div style="min-width:200px">
+              <label>Course</label>
+              <select id="filterTestCourse" onchange="loadTestQuestionsTable()">
+                <option value="">All courses</option>
+              </select>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadTestQuestionsTable()">🔄 Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table id="testsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Course</th>
+                  <th>Question (EN)</th>
+                  <th>Type</th>
+                  <th>Answer</th>
+                  <th>Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--gray);padding:20px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /app -->
+
+  <script>
+    // ─────────────────────────────────────────────
+    // Determine base path for API calls.
+    // If this file is in /admin/, the API is at ../api/
+    // ─────────────────────────────────────────────
+    const API = '../api';
+
+    // ─────────────────────────────────────────────
+    // Helpers
+    // ─────────────────────────────────────────────
+    async function api(file, action, method = 'GET', body = null) {
+      const url = `${API}/${file}.php?action=${action}`;
+      const opts = { method, credentials: 'include', headers: {} };
+      if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+
+      try {
+        const res = await fetch(url, opts);
+        const text = await res.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error('Invalid JSON:', text);
+          throw new Error('Server response was not JSON: ' + text.substring(0, 100) + '...');
+        }
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    function showAlert(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = `alert alert-${type} show`;
+      el.innerHTML = (type === 'success' ? '✅ ' : '❌ ') + msg;
+      setTimeout(() => el.classList.remove('show'), 5000);
+    }
+
+    function clearInputs(...ids) { ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; }); }
+
+    function levelBadge(level) {
+      const cls = { beginner: 'badge-green', intermediate: 'badge-blue', advanced: 'badge-purple' };
+      return `<span class="badge ${cls[level] || ''}">${level}</span>`;
+    }
+
+    // ─────────────────────────────────────────────
+    // Navigation
+    // ─────────────────────────────────────────────
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + name)?.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.getAttribute('onclick')?.includes(name)) n.classList.add('active');
+      });
+      // Load data when entering certain pages
+      if (name === 'viewCourses') loadCoursesTable();
+      if (name === 'viewWords') { loadCoursesDropdown('filterCourse'); loadWordsTable(); }
+      if (name === 'viewTests') { loadCoursesDropdown('filterTestCourse'); loadTestQuestionsTable(); }
+      if (name === 'addLesson') loadCoursesDropdown('lCourse');
+      if (name === 'addWord') loadCoursesDropdown('wCourse');
+      if (name === 'addTestQuestion') loadCoursesDropdown('tqCourse');
+    }
+
+    // ─────────────────────────────────────────────
+    // Auth
+    // ─────────────────────────────────────────────
+    function showLoginPage() { document.getElementById('loginPage').style.display = 'flex'; document.getElementById('registerPage').style.display = 'none'; document.getElementById('app').style.display = 'none'; }
+    function showRegisterPage() { document.getElementById('registerPage').style.display = 'flex'; document.getElementById('loginPage').style.display = 'none'; document.getElementById('app').style.display = 'none'; }
+
+    async function checkSession() {
+      const data = await api('auth', 'check');
+      if (data.authenticated) { showApp(data.username); }
+      else { showLoginPage(); }
+    }
+
+    function showApp(username) {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('registerPage').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('welcomeUser').textContent = username;
+      loadDashboard();
+      showPage('dashboard');
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value;
+      if (!username || !password) { showLoginError('Please enter username and password.'); return; }
+      const data = await api('auth', 'login', 'POST', { username, password });
+      if (data.error) { showLoginError(data.error); }
+      else { showApp(data.user.username); }
+    }
+
+    async function doRegister() {
+      const username = document.getElementById('regUser').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPass').value;
+      if (!username || !email || !password) { showAlert('registerAlert', 'error', 'All fields are required.'); return; }
+      const data = await api('auth', 'register', 'POST', { username, email, password });
+      if (data.error) { showAlert('registerAlert', 'error', data.error); }
+      else {
+        document.getElementById('registerSuccess').style.display = 'flex';
+        setTimeout(() => showApp(username), 1500);
+      }
+    }
+
+    async function doLogout() {
+      await api('auth', 'logout', 'POST');
+      showLoginPage();
+    }
+
+    function showLoginError(msg) {
+      document.getElementById('loginMsg').textContent = msg;
+      document.getElementById('loginAlert').classList.add('show');
+    }
+
+    // Allow Enter key on login form
+    document.addEventListener('DOMContentLoaded', () => {
+      ['loginUser', 'loginPass'].forEach(id =>
+        document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); })
+      );
+      checkSession();
+    });
+
+    // ─────────────────────────────────────────────
+    // Dashboard
+    // ─────────────────────────────────────────────
+    async function loadDashboard() {
+      const data = await api('user', 'stats');
+      if (data.error) return;
+      document.getElementById('statCourses').textContent = data.total_courses_completed ?? '—';
+      document.getElementById('statWords').textContent = data.total_words_learned ?? '—';
+      document.getElementById('statCompleted').textContent = data.total_courses_completed ?? '—';
+      document.getElementById('statStreak').textContent = data.streak_days ?? '—';
+    }
+
+    // ─────────────────────────────────────────────
+    // Users
+    // ─────────────────────────────────────────────
+    async function submitUser() {
+      const username = document.getElementById('uUser').value.trim();
+      const email = document.getElementById('uEmail').value.trim();
+      const password = document.getElementById('uPass').value;
+      if (!username || !email || !password) { showAlert('userAlert', 'error', 'All fields are required.'); return; }
+      const data = await api('auth', 'register', 'POST', { username, email, password });
+      if (data.error) { showAlert('userAlert', 'error', data.error); }
+      else {
+        showAlert('userAlert', 'success', `User "${username}" created (ID: ${data.user_id})`);
+        clearInputs('uUser', 'uEmail', 'uPass');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // Courses
+    // ─────────────────────────────────────────────
+    async function submitCourse() {
+      const payload = {
+        title_en: document.getElementById('cTitleEn').value.trim(),
+        title_kk: document.getElementById('cTitleKk').value.trim(),
+        title_ru: document.getElementById('cTitleRu').value.trim(),
+        description_en: document.getElementById('cDescEn').value.trim(),
+        description_kk: document.getElementById('cDescKk').value.trim(),
+        description_ru: document.getElementById('cDescRu').value.trim(),
+        level: document.getElementById('cLevel').value,
+      };
+      if (!payload.title_en || !payload.title_kk || !payload.title_ru || !payload.level) {
+        showAlert('courseAlert', 'error', 'Title in all 3 languages and level are required.'); return;
+      }
+      const data = await api('courses', 'add', 'POST', payload);
+      if (data.error) { showAlert('courseAlert', 'error', data.error); }
+      else {
+        showAlert('courseAlert', 'success', `Course created! ID: ${data.course_id}`);
+        clearInputs('cTitleEn', 'cTitleKk', 'cTitleRu', 'cDescEn', 'cDescKk', 'cDescRu');
+        document.getElementById('cLevel').value = '';
+      }
+    }
+
+    async function loadCoursesTable() {
+      try {
+        const courses = await api('courses', 'list');
+        const tbody = document.querySelector('#coursesTable tbody');
+        if (!Array.isArray(courses) || courses.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray);padding:20px">No courses found</td></tr>'; return;
+        }
+        tbody.innerHTML = courses.map(c => `
+      <tr>
+        <td>${c.id}</td>
+        <td><strong>${c.title_en}</strong><br><small style="color:var(--gray)">${c.title_ru}</small></td>
+        <td>${levelBadge(c.level)}</td>
+        <td>${c.total_lessons}</td>
+        <td>${(c.created_at || '').substring(0, 10)}</td>
+      </tr>`).join('');
+      } catch (err) {
+        console.error('API Error:', err);
+        document.querySelector('#coursesTable tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;padding:20px">Error loading courses: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function loadCoursesDropdown(selectId) {
+      const courses = await api('courses', 'list');
+      const sel = document.getElementById(selectId);
+      if (!sel) return;
+      const first = sel.options[0]?.text.includes('All') ? '<option value="">All courses</option>' : '<option value="">— choose course —</option>';
+      sel.innerHTML = first + (Array.isArray(courses) ? courses.map(c => `<option value="${c.id}">${c.title_en}</option>`).join('') : '');
+    }
+
+    // ─────────────────────────────────────────────
+    // Lessons
+    // ─────────────────────────────────────────────
+    async function submitLesson() {
+      const payload = {
+        course_id: parseInt(document.getElementById('lCourse').value),
+        title_en: document.getElementById('lTitleEn').value.trim(),
+        title_kk: document.getElementById('lTitleKk').value.trim(),
+        title_ru: document.getElementById('lTitleRu').value.trim(),
+        content_en: document.getElementById('lContentEn').value.trim(),
+        content_kk: document.getElementById('lContentKk').value.trim(),
+        content_ru: document.getElementById('lContentRu').value.trim(),
+      };
+      if (!payload.course_id || !payload.title_en || !payload.title_kk || !payload.title_ru) {
+        showAlert('lessonAlert', 'error', 'Course and title in all 3 languages are required.'); return;
+      }
+      const data = await api('courses', 'add_lesson', 'POST', payload);
+      if (data.error) { showAlert('lessonAlert', 'error', data.error); }
+      else {
+        showAlert('lessonAlert', 'success', `Lesson added! ID: ${data.lesson_id}`);
+        clearInputs('lTitleEn', 'lTitleKk', 'lTitleRu', 'lContentEn', 'lContentKk', 'lContentRu');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // Words
+    // ─────────────────────────────────────────────
+    async function loadLessonsForWord() {
+      const courseId = document.getElementById('wCourse').value;
+      const sel = document.getElementById('wLesson');
+      sel.innerHTML = '<option value="">— loading… —</option>';
+      if (!courseId) { sel.innerHTML = '<option value="">— choose course first —</option>'; return; }
+      const course = await api('courses', `get&id=${courseId}`);
+      sel.innerHTML = '<option value="">— choose lesson —</option>';
+      if (course.lessons?.length) {
+        course.lessons.forEach(l => { const o = new Option(l.title_en, l.id); sel.add(o); });
+      }
+    }
+
+    async function submitWord() {
+      const payload = {
+        lesson_id: parseInt(document.getElementById('wLesson').value),
+        kazakh: document.getElementById('wKazakh').value.trim(),
+        english: document.getElementById('wEnglish').value.trim(),
+        russian: document.getElementById('wRussian').value.trim(),
+        pronunciation: document.getElementById('wPronun').value.trim(),
+        word_type: document.getElementById('wType').value,
+        example_sentence_kk: document.getElementById('wExKk').value.trim(),
+        example_sentence_en: document.getElementById('wExEn').value.trim(),
+        example_sentence_ru: document.getElementById('wExRu').value.trim(),
+      };
+      if (!payload.lesson_id || !payload.kazakh || !payload.english || !payload.russian) {
+        showAlert('wordAlert', 'error', 'Lesson, Kazakh, English, and Russian are required.'); return;
+      }
+      const data = await api('words', 'add', 'POST', payload);
+      if (data.error) { showAlert('wordAlert', 'error', data.error); }
+      else {
+        showAlert('wordAlert', 'success', `Word "${payload.kazakh}" added! ID: ${data.word_id}`);
+        clearInputs('wKazakh', 'wEnglish', 'wRussian', 'wPronun', 'wExKk', 'wExEn', 'wExRu');
+        document.getElementById('wType').value = '';
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // View Words
+    // ─────────────────────────────────────────────
+    async function loadLessonsForFilter() {
+      const courseId = document.getElementById('filterCourse').value;
+      const sel = document.getElementById('filterLesson');
+      sel.innerHTML = '<option value="">All lessons</option>';
+      if (!courseId) { loadWordsTable(); return; }
+      const course = await api('courses', `get&id=${courseId}`);
+      if (course.lessons?.length) {
+        course.lessons.forEach(l => { const o = new Option(l.title_en, l.id); sel.add(o); });
+      }
+      loadWordsTable();
+    }
+
+    async function loadWordsTable() {
+      const lessonId = document.getElementById('filterLesson')?.value;
+      const tbody = document.querySelector('#wordsTable tbody');
+      if (!lessonId) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:20px">Select a lesson to see words</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:20px">Loading…</td></tr>';
+      const words = await api('words', `by_lesson&lesson_id=${lessonId}`);
+      if (!Array.isArray(words) || words.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:20px">No words in this lesson yet</td></tr>';
+        return;
+      }
+      tbody.innerHTML = words.map(w => `
+    <tr>
+      <td>${w.id}</td>
+      <td><strong>${w.kazakh}</strong></td>
+      <td>${w.english}</td>
+      <td>${w.russian}</td>
+      <td>${w.word_type ? `<span class="badge badge-purple">${w.word_type}</span>` : '—'}</td>
+      <td style="color:var(--gray);font-style:italic">${w.pronunciation || '—'}</td>
+    </tr>`).join('');
+    }
+
+    // ─────────────────────────────────────────────
+    // Test Questions
+    // ─────────────────────────────────────────────
+    async function submitTestQuestion() {
+      const courseId = parseInt(document.getElementById('tqCourse').value);
+      const opt1 = document.getElementById('tqOpt1').value.trim();
+      const opt2 = document.getElementById('tqOpt2').value.trim();
+      const opt3 = document.getElementById('tqOpt3').value.trim();
+      const opt4 = document.getElementById('tqOpt4').value.trim();
+      const options = [opt1, opt2, opt3, opt4].filter(o => o);
+
+      const payload = {
+        course_id: courseId,
+        question_text_en: document.getElementById('tqTextEn').value.trim(),
+        question_text_kk: document.getElementById('tqTextKk').value.trim(),
+        question_text_ru: document.getElementById('tqTextRu').value.trim(),
+        question_type: document.getElementById('tqType').value,
+        correct_answer: document.getElementById('tqCorrect').value.trim(),
+        options: options,
+        points: parseInt(document.getElementById('tqPoints').value) || 1,
+      };
+
+      if (!payload.course_id || !payload.question_text_en || !payload.question_text_kk || !payload.question_text_ru || !payload.correct_answer) {
+        showAlert('testQuestionAlert', 'error', 'Course, question text in all 3 languages, and correct answer are required.'); return;
+      }
+
+      const data = await api('tests', 'add_question', 'POST', payload);
+      if (data.error) { showAlert('testQuestionAlert', 'error', data.error); }
+      else {
+        showAlert('testQuestionAlert', 'success', `Question added! ID: ${data.question_id}`);
+        clearInputs('tqTextEn', 'tqTextKk', 'tqTextRu', 'tqCorrect', 'tqOpt1', 'tqOpt2', 'tqOpt3', 'tqOpt4');
+        document.getElementById('tqPoints').value = '1';
+      }
+    }
+
+    async function loadTestQuestionsTable() {
+      const courseId = document.getElementById('filterTestCourse')?.value;
+      const tbody = document.querySelector('#testsTable tbody');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:20px">Loading…</td></tr>';
+
+      let action = 'list_questions';
+      if (courseId) action += `&course_id=${courseId}`;
+
+      const questions = await api('tests', action);
+      if (!Array.isArray(questions) || questions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:20px">No test questions found</td></tr>'; return;
+      }
+      const typeBadge = t => {
+        const cls = { multiple_choice: 'badge-blue', translation: 'badge-green', fill_blank: 'badge-purple' };
+        const lbl = { multiple_choice: 'MC', translation: 'Trans', fill_blank: 'Fill' };
+        return `<span class="badge ${cls[t] || ''}">${lbl[t] || t}</span>`;
+      };
+      tbody.innerHTML = questions.map(q => `
+    <tr>
+      <td>${q.id}</td>
+      <td>${q.course_title || q.course_id}</td>
+      <td>${q.question_text_en}</td>
+      <td>${typeBadge(q.question_type)}</td>
+      <td><strong>${q.correct_answer}</strong></td>
+      <td>${q.points}</td>
+    </tr>`).join('');
+    }
+  </script>
+</body>
+
+</html>
